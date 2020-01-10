@@ -9,7 +9,28 @@ import datetime as dt
 from GeneralFunctions import verify_password, decimalAverage
 import pytz
 from io import BytesIO
+from pathlib import Path
 
+dbFileName = "glucose.db"
+dbPath = Path(f'/home/bill/dbs/{dbFileName}')
+# dbPath = Path(dbFile)
+db = Database()
+
+class Readings(db.Entity):
+    date = PrimaryKey(str)
+    am = Required(float)
+    pm = Optional(float)
+    comment = Optional(str)
+    average = Optional(float)
+
+DAtE = 0
+AM = 1
+PM = 2
+COMMENT = 3
+AVERAGE = 4
+
+db.bind(provider='sqlite', filename=str(dbPath), create_db=False)
+db.generate_mapping(create_tables=False)
 # def setup(APP, DB):
 #     global app
 #     app = APP
@@ -21,7 +42,7 @@ from io import BytesIO
 zulu = pytz.timezone('UTC')
 pst = pytz.timezone("America/Vancouver")
 
-def renderChart(Readings, dbFileName):
+def renderChart():
 
     DateCombined = []
     CommentDateCombined = []
@@ -136,3 +157,5 @@ def renderChart(Readings, dbFileName):
     img.seek(0)
     return img
     # return send_file(img, mimetype='image/png')
+
+

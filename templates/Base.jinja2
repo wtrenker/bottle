@@ -7,7 +7,7 @@
 
     <title>{{ title }}</title>
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='reset.css') }}">
+{#    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='reset.css') }}">#}
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
          crossorigin="anonymous">
@@ -65,15 +65,15 @@
 </head>
 <body>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul>
-               {% for message in messages %}
-                  <li>{{ message[1] }}</li>
-               {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+{#    {% with messages = get_flashed_messages(with_categories=true) %}#}
+{#        {% if messages %}#}
+{#            <ul>#}
+{#               {% for message in messages %}#}
+{#                  <li>{{ message[1] }}</li>#}
+{#               {% endfor %}#}
+{#            </ul>#}
+{#        {% endif %}#}
+{#    {% endwith %}#}
 
 
     <div class="input text" id="content">
