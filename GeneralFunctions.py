@@ -1,5 +1,11 @@
 import decimal as dec
 import hashlib, binascii, os
+from datetime import datetime
+import pytz
+
+zulu = pytz.timezone('UTC')
+pst = pytz.timezone("America/Vancouver")
+
 
 def decimalAverage(num1, num2):
     n1 = dec.Decimal(str(num1))
@@ -29,7 +35,21 @@ def verify_password(stored_password, provided_password):
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
     return pwdhash == stored_password
 
+def dateTimeStr(naive,tzoneStr='GMT'):
+    tzone = pytz.timezone(tzoneStr)
+    now = tzone.localize(naive)
+    wkday = now.strftime('%a')
+    ymd = now.strftime('%Y-%m-%d')
+    hour = now.strftime('%I')
+    if hour[0] == '0':   hour = hour[1]
+    minsec = now.strftime('%M:%S')
+    # ampm = now.strftime('%p').replace('AM', 'am').replace('PM', 'pm')
+    zone = now.strftime('%Z')
+    now = f"{wkday}, {ymd} {hour}:{minsec} {zone}"
+    return now
+
 
 if __name__ == '__main__':
-    storepw = hash_password('a1c')
-    print(storepw)
+    # timestr = dateTimeStr(datetime.now())
+    # print(timestr)
+    print(verify_password('', '54321'))

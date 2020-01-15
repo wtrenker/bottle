@@ -1,12 +1,12 @@
-from flask import Flask, request, Markup, send_file, render_template, session, redirect, flash, url_for, jsonify, Response
+# from flask import Flask, request, Markup, send_file, render_template, session, redirect, flash, url_for, jsonify, Response
 from pony.orm import Database, Optional, Required, PrimaryKey, db_session, sql_debug, select
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mpd
 import numpy as np
-import datetime as dt
-from GeneralFunctions import verify_password, decimalAverage
+from datetime import datetime
+from GeneralFunctions import verify_password, decimalAverage, dateTimeStr
 import pytz
 from io import BytesIO
 from pathlib import Path
@@ -39,7 +39,7 @@ db.generate_mapping(create_tables=False)
 #
 # print(f'app = {app}')
 
-zulu = pytz.timezone('UTC')
+# zulu = pytz.timezone('UTC')
 pst = pytz.timezone("America/Vancouver")
 
 def renderChart():
@@ -67,7 +67,7 @@ def renderChart():
             if rec[aM] is None and rec[pM] is None:  # Use the old method based on the recorded average
                 if rec[aVERAGE]:  # if average reading is Null, skip over partial readings
                     dtdate = rec[dATE]
-                    dtdate = dt.datetime.strptime(dtdate, "%Y-%m-%d")
+                    dtdate = datetime.strptime(dtdate, "%Y-%m-%d")
                     DateCombined.append(dtdate)
                     DailyAverageCombined.append(rec[aVERAGE])
                     if rec[cOMMENT]:
@@ -77,7 +77,7 @@ def renderChart():
             else:  # use the new method based on a computed average
                 if rec[pM]:  # if no evening reading, skip over this reading
                     dtdate = rec[dATE]
-                    dtdate = dt.datetime.strptime(dtdate, "%Y-%m-%d")
+                    dtdate = datetime.strptime(dtdate, "%Y-%m-%d")
                     DateCombined.append(dtdate)
                     DailyAVerage = float(decimalAverage(rec[aM], rec[pM]))
                     DailyAverageCombined.append(DailyAVerage)
@@ -132,18 +132,8 @@ def renderChart():
     plt.title('Average Daily Blood Glucose (Jardiance Trial)', loc='left')
     plt.title('William Trenker')
     #
-    naivenow = dt.datetime.now()
-    now = zuluawarenow = pst.localize(naivenow)  # zulu.localize(naivenow)
-    # now = pstawarenow = zuluawarenow.astimezone(pst)
-    # fmt = "%Y-%m-%d %I:%M:%S%p"
-    ymd = now.strftime('%Y-%m-%d')
-    hour = now.strftime('%I')
-    if hour[0] == '0':   hour = hour[1]
-    minsec = now.strftime('%M:%S')
-    ampm = now.strftime('%p').replace('AM', 'am').replace('PM', 'pm')
-    zone = now.strftime('%Z')
-    now = f"{ymd} {hour}:{minsec}{ampm} {zone}"
-    dbNow = f'({dbFileName}) {now}'
+    nowstr = dateTimeStr(datetime.now(), "America/Vancouver")
+    dbNow = f'({dbFileName}) {nowstr}'
     plt.title(dbNow, fontsize=10, loc='right')
     #
     ax1.set_xlabel('Date')  # Note that this won't work on plt or ax2
@@ -158,4 +148,4 @@ def renderChart():
     return img
     # return send_file(img, mimetype='image/png')
 
-
+# renderChart()
