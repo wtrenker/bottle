@@ -2,10 +2,15 @@
 {% block content %}
     <form action="/signon" method="post" enctype="multipart/form-data">
         <input type="hidden" id="sessionID" name="sessionID" value="{{ sessionID }}">
+        {% if tryAgain is defined and tryAgain %}
+        <h2>Try Again</h2><br/>
+        {% endif %}
+{#        <h2>sessionID = {{ sessionID }}</h2>#}
         <h2>Access Code<br></h2>
-        <h2><input type="password" name="code" id="pw" autocomplete="new-password" value="4567"></h2><br>
+        <h2><input type="password" name="code" id="pw" autocomplete="new-password" value="xxxxxxxxx"></h2><br>
 {#        <h2>{{ form.code(id="pw", autocomplete="new-password", value="4567") }}</h2>#}
         <h2><input type="submit" value="Sign On"></h2><br>
     </form>
-    <h2><a href="{{ url("home") }}">Home</a></h2>
+    <h2><a href="/home">Cancel</a></h2>
+{#    <h3>{{ self }}</h3>#}
 {% endblock %}

@@ -1,21 +1,18 @@
 {% extends "Base.jinja2" %}
 {% block content %}
-
-{#      {% for message in form.name.errors %}#}
-{#         <div>{{ message }}</div>#}
-{#      {% endfor %}#}
-{##}
-{#      {% for message in form.email.errors %}#}
-{#         <div>{{ message }}</div>#}
-{#      {% endfor %}#}
-
-      <form action = {{ url("edit") }} method="post">
+      <form action = "/select" method="post"  enctype="multipart/form-data">
+            <input type="hidden" name="sessionID" value="{{ sessionID }}">
             <div>
-               {{ form.helddateslist.label }}<br>
-               {{ form.helddateslist }}
+               <h2>List of Held Dates</h2>
+               <h2><label for="dateList"></label></h2>
+                <h2><select id="dateList" name="selectedDate"></h2>
+                    {% for heldDate in heldReadingDates %}
+                        <h2><option name="{{ heldDate[0] }}">{{ heldDate[1] }}</option></h2><br>
+                    {% endfor %}
+                </select>
                <br>
-               {{ form.submit }}
+               <h2><input type="submit" value="Select Date"></h2><br>
             </div>
         </form>
-    <a href="{{ url("admin") }}">Admin</a>
+    <h2><a href="/admin">Admin</a></h2>
 {% endblock %}

@@ -1,11 +1,12 @@
 {% extends "Base.jinja2" %}
 {% block content %}
+{#    <h2>sessionID = {{ sessionID }}</h2>#}
     {% if numberOfHeldReadings > 0 %}
         <h2><div>Number of Partial Readings - {{ numberOfHeldReadings }}</div></h2>
         <h2><a href="/select/{{ sessionID }}">Choose and Complete a Partial Reading</a></h2>
     {% endif %}
     <h2><a href="/enter/{{ sessionID }}">Enter a new Reading</a></h2>
-    <h2><a href="/pick/{{ sessionID }}">Pick a Reading by date to edit</a></h2>
-    <h2><a href="{{ url('home') }}">Home</a></h2>
+{#    <h2><a href="/pick/{{ sessionID }}">Pick a Reading by date to edit</a></h2>#}
+    <h2><a href="/admin">Done</a></h2>
 {#    {{ globals }}#}
 {% endblock %}

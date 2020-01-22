@@ -1,28 +1,25 @@
 from datetime import datetime, timedelta
-from GeneralFunctions import dateTimeStr
+from General import dateTimeStr
 
 import pprint
 
 sessionKey = 'glucose2'
 sessionWeeks = 1
 
-def getSessionIdCookieFromRequest(request):
-    sessionID = ''  #ensure the variable is defined incase the following try fails
-    try:
-        sessionID = request.get_cookie(sessionKey)
-    except:
-        sessionID = NoNe
-    # sessionID = sessionID if sessionID is not None else ''  #ensure result is not None
+def getSessionCookie(request):
+    sessionID = request.get_cookie(sessionKey)
     return sessionID
 
-def setSessionIdCookieInResponse(response, sessionID):
+def setSessionCookie(response, sessionID):
     # naivenow = datetime.now()
     # pst = pytz.timezone("America/Vancouver")
     # now = pst.localize(naivenow)
     now = datetime.now()
     expires = now + timedelta(weeks=sessionWeeks)
-    expires = dateTimeStr(expires)
-    response.set_cookie(sessionKey, sessionID, expires=expires)
+    response.set_cookie(sessionKey, sessionID, expires=expires, httponly='on')
+
+def deleteSessionCookie(response):
+    response.delete_cookie(sessionKey)
 
 '''
 
@@ -34,5 +31,3 @@ zone = now.strftime('%Z')
 
 '''
 
-# expires = dateTimeStr(datetime.now())
-# print(expires)

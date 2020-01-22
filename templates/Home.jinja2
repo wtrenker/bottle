@@ -3,20 +3,20 @@
 
     <h2>2019 - 2020</h2>
 
-    <a href="{{ url('averages') }}"><h3>View Average Daily Blood Glucose Chart</h3></a>
+    <a href="/averages"><h3>View Average Daily Blood Glucose Chart</h3></a>
 
     <div class="blockquote" class="blockquote-reverse"
        style="border: 3px solid red; margin: 50px; padding: 10px; border-radius: 10px;
        background-color: rgba(127, 255, 212, 0.1);">
-<p>This website allows me to track my daily blood glucose levels.  My goal is to have a visual indicator of how various treatments affect my glucose.  The chart shows the daily average blood glucose as a red line, it shows the target range by 2 solid lines,  it shows the trend by a single dashed line (which is a 2nd degree polynomial curve fit), and it provides for notes on the chart to highlight key items. The chart's live beginnings can be viewed by clicking the link at the top of this page.</p>
+<p>This website allows me to track my daily blood glucose levels.  My goal is to have a visual indicator of how various treatments affect my glucose.  The chart shows the average daily blood glucose as a red line, it shows the target range by 2 solid lines,  it shows the trend by a single dashed line (which is a 2nd degree polynomial curve fit), and it provides for notes on the chart to highlight key items. The chart's live beginnings can be viewed by clicking the link at the top of this page.</p>
 <p>A major feature is that the chart is generated in real-time so when I update the database daily I don't have to do anything to re-plot the chart. A very realistic example of the long term goal is documented on the live chart. It is the amazing improvement that Jardiance is making. I share this chart with my healthcare professionals who find it very helpful.</p>
 <p>On the technical side, this is a Python, Sqlite, and Matplotlib project and is the 2nd major version of the glucose software, which involves a significant refactoring. This new version supports tracking the average daily blood glucose reading over a long time period, ultimately years, not just months.</p>
-<p>I am using the open source Caddy web server to front-end the web site. Caddy is a secure https server that uses commercial-grade open source security technology. It is a production server written in the Go programming language which features tighter security that many of it counterparts. I am also using this project to delve into the Go language which I feel is about to spring onto the web application development scene. As a Computer Scientist, working over the years in various computer languages, I think that the Go language brings together many of the advantageous features desired by the programming specialists in my profession.</p>
+<p>I am using the open source Caddy web server to front-end the web site. Caddy is a secure https server that uses commercial-grade open source security technology. It is a production server written in the Go programming language which features tighter security than many of it counterparts. I am also using this project to delve into the Go language which I feel is about to spring onto the web application development scene. As a Computer Scientist, working over the years in various computer languages, I think that the Go language brings together many of the advantageous features desired by the programming specialists in my profession.</p>
 <div style="text-align: right;">-- William Trenker (wtrenker@gmail.com)</div>
     </div>
 
     <div id="fixed">
-    <a class="admin" style="display: none;" href="{{ url('admin') }}">Admin</a>
+    <a class="admin" style="display: none;" href="/admin">Admin</a>
     </div>
 
 {#    <div id="fixed">#}

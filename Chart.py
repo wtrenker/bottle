@@ -6,13 +6,12 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mpd
 import numpy as np
 from datetime import datetime
-from GeneralFunctions import verify_password, decimalAverage, dateTimeStr
+from General import verify_password, decimalAverage, dateTimeStr, dbFileName
 import pytz
 from io import BytesIO
 from pathlib import Path
 
-dbFileName = "glucose.db"
-dbPath = Path(f'/home/bill/dbs/{dbFileName}')
+dbPath = Path(f'./db/{dbFileName}')
 # dbPath = Path(dbFile)
 db = Database()
 
@@ -61,7 +60,7 @@ def renderChart():
         # xx = qry.get_sql()
         try:
             recs = qry.fetch()
-        except e:
+        except Exception as e:
             print(e)
         for rec in recs:
             if rec[aM] is None and rec[pM] is None:  # Use the old method based on the recorded average

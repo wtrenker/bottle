@@ -1,12 +1,16 @@
 {% extends "Base.jinja2" %}
 {% block content %}
+    {% if alreadyEntered is defined and alreadyEntered %}
+    <h3>The readings for {{ editDate }} are already entered and cannot be entered twice. Try a different date.</h3>
+    {%  endif %}
     <form action="/enter" method="post" enctype="multipart/form-data">
         <input type="hidden" value="{{ sessionID }}" name="sessionID">
         <h2>Date <input type="text" id="datepicker" autocomplete="off" name="date"></h2>
-        <h2>Norning <input type="text" name="am"></h2>
+        <h2>Morning <input type="text" name="am"></h2>
         <h2>Evening <input type="text" name="pm"></h2>
-        <h2>Annotation <input type="text" size=50 name="annotation"></h2>
+        <h2>Annotation <input type="text" size=50 name="comment"></h2>
         <h2><input type="submit" value="Enter Data"></h2><br>
-        <a href="{{ url("admin") }}">Admin</a>
+        <h2><a href="/admin/{{ sessionID }}">Cancel</a></h2>
     </form>
+    <dbFileName {{ dbFileName }}>
 {% endblock %}

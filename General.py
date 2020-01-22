@@ -6,6 +6,7 @@ import pytz
 zulu = pytz.timezone('UTC')
 pst = pytz.timezone("America/Vancouver")
 
+dbFileName = "glucose.db"
 
 def decimalAverage(num1, num2):
     n1 = dec.Decimal(str(num1))
@@ -48,6 +49,7 @@ def dateTimeStr(naive,tzoneStr='GMT'):
     now = f"{wkday}, {ymd} {hour}:{minsec} {zone}"
     return now
 
+def isNone(obj): return obj is None or obj == 'None'
 
 if __name__ == '__main__':
     # timestr = dateTimeStr(datetime.now())
