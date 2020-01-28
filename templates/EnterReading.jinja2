@@ -1,7 +1,16 @@
 {% extends "Base.jinja2" %}
 {% block content %}
-    {% if alreadyEntered is defined and alreadyEntered %}
-    <h3>The readings for {{ editDate }} are already entered and cannot be entered twice. Try a different date.</h3>
+    {% if maxDate is defined %}
+        <h3>The last recorded entry was for {{ maxDate }}.</h3>
+    {% endif %}
+    {% if AMisNotOK is defined %}
+        <h3>The entry ({{ errorValue }}) for the Morning field is not a number.  Try Again.</h3>
+    {% endif %}
+    {% if PMisNotOK is defined %}
+        <h3>The entry ({{ errorValue }}) for the Evening field is not a number.  Try Again.</h3>
+    {% endif %}
+    {% if alreadyEntered is defined %}
+        <h3>The readings for {{ editDate }} are already entered and cannot be entered twice. Try a different date.</h3>
     {%  endif %}
     <form action="/enter" method="post" enctype="multipart/form-data">
         <input type="hidden" value="{{ sessionID }}" name="sessionID">

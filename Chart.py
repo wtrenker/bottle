@@ -10,6 +10,7 @@ from General import verify_password, decimalAverage, dateTimeStr, dbFileName
 import pytz
 from io import BytesIO
 from pathlib import Path
+import Sessions, HTTPCookie, System
 
 dbPath = Path(f'./db/{dbFileName}')
 # dbPath = Path(dbFile)
@@ -41,7 +42,7 @@ db.generate_mapping(create_tables=False)
 # zulu = pytz.timezone('UTC')
 pst = pytz.timezone("America/Vancouver")
 
-def renderChart():
+def renderChart(request):
 
     DateCombined = []
     CommentDateCombined = []
@@ -131,8 +132,10 @@ def renderChart():
     plt.title('Average Daily Blood Glucose (Jardiance Trial)', loc='left')
     plt.title('William Trenker')
     #
-    nowstr = dateTimeStr(datetime.now(), "America/Vancouver")
-    dbNow = f'({dbFileName}) {nowstr}'
+    # sessionID = HTTPCookie.getSessionCookie(request)
+    nowstr = System.getLastReadingDateStr()
+    # nowstr = dateTimeStr(datetime.now(), "America/Vancouver")
+    dbNow = f'({dbFileName}) last updated: {nowstr}'
     plt.title(dbNow, fontsize=10, loc='right')
     #
     ax1.set_xlabel('Date')  # Note that this won't work on plt or ax2

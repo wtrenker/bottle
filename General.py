@@ -36,7 +36,7 @@ def verify_password(stored_password, provided_password):
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
     return pwdhash == stored_password
 
-def dateTimeStr(naive,tzoneStr='GMT'):
+def dateTimeStr(naive, tzoneStr='GMT', ampm=False):
     tzone = pytz.timezone(tzoneStr)
     now = tzone.localize(naive)
     wkday = now.strftime('%a')
@@ -44,14 +44,27 @@ def dateTimeStr(naive,tzoneStr='GMT'):
     hour = now.strftime('%I')
     if hour[0] == '0':   hour = hour[1]
     minsec = now.strftime('%M:%S')
-    # ampm = now.strftime('%p').replace('AM', 'am').replace('PM', 'pm')
+    if ampm:
+        ampm = now.strftime('%p').replace('AM', 'am').replace('PM', 'pm')
+    else:
+        ampm = ''
     zone = now.strftime('%Z')
-    now = f"{wkday}, {ymd} {hour}:{minsec} {zone}"
+    now = f"{wkday}, {ymd} {hour}:{minsec}{ampm} {zone}"
     return now
 
 def isNone(obj): return obj is None or obj == 'None'
 
+
+def isFloat(candidateStr=None):
+    ok = True
+    try:
+        _ = float(candidateStr)
+    except (TypeError, ValueError):
+        ok = False
+    return ok
+
 if __name__ == '__main__':
-    # timestr = dateTimeStr(datetime.now())
+    print(dateTimeStr(datetime.now(), 'America/Vancouver', ampm=True))
     # print(timestr)
-    print(verify_password('', '54321'))
+    # print(verify_password('', '54321'))
+    # print(isFloat(''))

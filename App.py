@@ -1,5 +1,5 @@
 from pony.orm import Database, Optional, Required, PrimaryKey, db_session, sql_debug, select, IntegrityError, \
-                     ObjectNotFound
+                     ObjectNotFound, max
 # from forms import SigninForm, DataEntryForm, SelectReadingForm, EditReadingForm, PickReadingForm
 from General import verify_password, decimalAverage
 from collections import namedtuple
@@ -10,12 +10,13 @@ import Chart
 import Sessions
 import System
 import HTTPCookie
-from General import verify_password, dbFileName
+from General import verify_password, dbFileName, dateTimeStr
 from bottle import route, default_app, HTTPResponse, run, jinja2_view, url, get, post, request, html_escape,\
     response, redirect, debug, jinja2_template, MultiDict, post
-from General import isNone
+from General import isNone, isFloat
 import pprint
 from Log import putLog
+from datetime import datetime
 
 log = putLog
 
@@ -70,7 +71,7 @@ def averages():
 # @get('/chart', name='chart')
 def chart():
     # log('chart', 'HTTPResponse')
-    img = Chart.renderChart()
+    img = Chart.renderChart(request)
     resp = HTTPResponse(body=img, status=200)
     resp.set_header('content_type', 'image/png')
     return resp
@@ -138,6 +139,9 @@ def enter(sessionID):
     respData.update(MultiDict(sessionID=sessionID, numberOfHeldReadings=numberOfPartials()))
     respData.update(MultiDict(dbFileName=dbFileName))
     if isSignedOn:
+        with db_session:
+            maxReadingDate = max(r.date for r in Readings)
+        respData.update(MultiDict(maxDate=maxReadingDate))
         return jinja2_template('EnterReading.jinja2', respData, template_lookup=['templates'])
     else:
         return jinja2_template('Signon.jinja2', respData,  template_lookup=['templates'])
@@ -147,12 +151,31 @@ def enterPost():
     rf = request.forms
     formDate = rf.date
     formAM = rf.am
+    formAM = None if formAM == '' else formAM
     formPM = rf.pm
     formPM = None if formPM == '' else formPM
     formNote = rf.comment
+
     sessionID = HTTPCookie.getSessionCookie(request)
     respData = MultiDict(url=url, title='Blood Glucose', sessionID=sessionID)
     respData.update(MultiDict(numberOfHeldReadings=numberOfPartials()))
+    respData.update(MultiDict(editDate=formDate))
+
+    with db_session:
+        maxReadingDate = max(r.date for r in Readings)
+    respData.update(MultiDict(maxDate=maxReadingDate))
+
+    valueError = False
+    if not isFloat(formAM):
+        valueError = True
+        respData.update(MultiDict(AMisNotOK=True, errorValue=formAM))
+    if formPM is not None:
+        if not isFloat(formPM):
+            valueError = True
+            respData.update(MultiDict(PMisNotOK=True, errorValue=formPM))
+    if valueError:
+        return jinja2_template('EnterReading.jinja2', respData, template_lookup=['templates'])
+
     alreadyEntered = False
     try:
         with db_session:
@@ -160,10 +183,10 @@ def enterPost():
     except (IntegrityError, Exception):
         alreadyEntered = True
     if alreadyEntered:
-        respData.update(MultiDict(editDate=formDate, alreadyEntered=True))
         respData.update(MultiDict(alreadyEntered=True))
         return jinja2_template('EnterReading.jinja2', respData, template_lookup=['templates'])
     respData.update(MultiDict(numberOfHeldReadings=numberOfPartials()))
+    System.putLastReadingDateStr(dateTimeStr(datetime.now(), 'America/Vancouver', ampm=True))
     return jinja2_template('Admin.jinja2', respData, template_lookup=['templates'])
 
 # @get('/select/<sessionID>', name='selectReading')
@@ -217,12 +240,22 @@ def selectPost():
 def edit():
     respData = MultiDict(url=url, title='Blood Glucose')
     rf = request.forms
+    updated = False
+    isFloatOK = False
     with db_session:
         reading = Readings[rf.date]
         if rf.pm != '':
             reading.pm = rf.pm
+            isFloatOK = isFloat(rf.pm)
+            updated = True
         if rf.comment != '':
             reading.comment = rf.comment
+            updated = True
+    if not isFloatOK:
+        respData.update(MultiDict(PMisNotOK=True, errorValue=rf.pm))
+        return jinja2_template('EditReading.jinja2', respData, template_lookup=['templates'])
+    if updated:
+        System.putLastReadingDateStr(dateTimeStr(datetime.now(), 'America/Vancouver',ampm=True))
     return jinja2_template('UpdateDone.jinja2', respData, template_lookup=['templates'])
 
 # @get('/pick', name='pick')
@@ -247,6 +280,22 @@ def setup_routing (app):
 
 app = default_app()
 setup_routing(app)
+
+@app.error(404)
+def error404handler(error):
+    f = request.fullpath
+    respData = MultiDict(dict(f=f))
+    return jinja2_template('405.jinja2', respData, template_lookup=['templates'])
+
+@app.error(405)
+def error405handler(error):
+    f = request.fullpath
+    respData = MultiDict(dict(f=f))
+    return jinja2_template('405.jinja2', respData, template_lookup=['templates'])
+
+@app.error(500)
+def error500handler(error):
+    return jinja2_template('500.jinja2', template_lookup=['templates'])
 
 
 
