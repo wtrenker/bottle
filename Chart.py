@@ -1,4 +1,5 @@
-# from flask import Flask, request, Markup, send_file, render_template, session, redirect, flash, url_for, jsonify, Response
+from bottle import route, default_app, HTTPResponse, run, jinja2_view, url, get, post, request, html_escape,\
+    response, redirect, debug, jinja2_template, MultiDict, post
 from pony.orm import Database, Optional, Required, PrimaryKey, db_session, sql_debug, select
 import matplotlib as mpl
 mpl.use('Agg')
@@ -31,13 +32,6 @@ AVERAGE = 4
 
 db.bind(provider='sqlite', filename=str(dbPath), create_db=False)
 db.generate_mapping(create_tables=False)
-# def setup(APP, DB):
-#     global app
-#     app = APP
-#     global db
-#     db = DB
-#
-# print(f'app = {app}')
 
 # zulu = pytz.timezone('UTC')
 pst = pytz.timezone("America/Vancouver")
@@ -150,4 +144,34 @@ def renderChart(request):
     return img
     # return send_file(img, mimetype='image/png')
 
-# renderChart()
+@get('/chart', name='chart')
+def chart():
+    # log('chart', 'HTTPResponse')
+    img = renderChart(request)
+    resp = HTTPResponse(body=img, status=200)
+    resp.set_header('content_type', 'image/png')
+    return resp
+
+app = default_app()
+
+@app.error(404)
+def error404handler(error):
+    f = request.fullpath
+    respData = MultiDict(dict(f=f))
+    return jinja2_template('405.jinja2', respData, template_lookup=['templates'])
+
+@app.error(405)
+def error405handler(error):
+    f = request.fullpath
+    respData = MultiDict(dict(f=f))
+    return jinja2_template('405.jinja2', respData, template_lookup=['templates'])
+
+@app.error(500)
+def error500handler(error):
+    return jinja2_template('500.jinja2', template_lookup=['templates'])
+
+
+
+if __name__ == '__main__':
+    run(host='localhost', port=8081, debug=True)
+

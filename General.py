@@ -36,11 +36,12 @@ def verify_password(stored_password, provided_password):
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
     return pwdhash == stored_password
 
-def dateTimeStr(naive, tzoneStr='GMT', ampm=False):
+def dateTimeStr(naive, tzoneStr='GMT', ampm=False, month=False):
     tzone = pytz.timezone(tzoneStr)
     now = tzone.localize(naive)
     wkday = now.strftime('%a')
-    ymd = now.strftime('%Y-%m-%d')
+    month = '%b' if month else '%m'
+    ymd = now.strftime(f'%Y-{month}-%d')
     hour = now.strftime('%I')
     if hour[0] == '0':   hour = hour[1]
     minsec = now.strftime('%M:%S')
@@ -64,7 +65,7 @@ def isFloat(candidateStr=None):
     return ok
 
 if __name__ == '__main__':
-    print(dateTimeStr(datetime.now(), 'America/Vancouver', ampm=True))
+    print(dateTimeStr(datetime.now(), 'America/Vancouver', ampm=True, month=True))
     # print(timestr)
-    # print(verify_password('', '54321'))
     # print(isFloat(''))
+    # print(hash_password(''))

@@ -6,7 +6,7 @@ from collections import namedtuple
 import time
 import os
 from pathlib import Path
-import Chart
+# import Chart
 import Sessions
 import System
 import HTTPCookie
@@ -68,13 +68,12 @@ def averages():
     respData = dict(url=url, title='Blood Glucose', timestamp=time.time(), sessionID=sessionID)
     return jinja2_template('Averages.jinja2', respData, template_lookup=['templates'])
 
-# @get('/chart', name='chart')
-def chart():
-    # log('chart', 'HTTPResponse')
-    img = Chart.renderChart(request)
-    resp = HTTPResponse(body=img, status=200)
-    resp.set_header('content_type', 'image/png')
-    return resp
+# def chart():
+#     # log('chart', 'HTTPResponse')
+#     img = Chart.renderChart(request)
+#     resp = HTTPResponse(body=img, status=200)
+#     resp.set_header('content_type', 'image/png')
+#     return resp
 
 def adminCommon(request, response, sessionID=None):
     Sessions.purgeOldSessions()
@@ -186,7 +185,7 @@ def enterPost():
         respData.update(MultiDict(alreadyEntered=True))
         return jinja2_template('EnterReading.jinja2', respData, template_lookup=['templates'])
     respData.update(MultiDict(numberOfHeldReadings=numberOfPartials()))
-    System.putLastReadingDateStr(dateTimeStr(datetime.now(), 'America/Vancouver', ampm=True))
+    System.putLastReadingDateStr(dateTimeStr(datetime.now(), 'America/Vancouver', ampm=True, month=True))
     return jinja2_template('Admin.jinja2', respData, template_lookup=['templates'])
 
 # @get('/select/<sessionID>', name='selectReading')
@@ -255,7 +254,7 @@ def edit():
         respData.update(MultiDict(PMisNotOK=True, errorValue=rf.pm))
         return jinja2_template('EditReading.jinja2', respData, template_lookup=['templates'])
     if updated:
-        System.putLastReadingDateStr(dateTimeStr(datetime.now(), 'America/Vancouver',ampm=True))
+        System.putLastReadingDateStr(dateTimeStr(datetime.now(), 'America/Vancouver',ampm=True, month=True))
     return jinja2_template('UpdateDone.jinja2', respData, template_lookup=['templates'])
 
 # @get('/pick', name='pick')
@@ -267,7 +266,7 @@ def setup_routing (app):
     app.route('/', "GET", home)
     app.route('/home', "GET", home)
     app.route('/averages', 'GET', averages)
-    app.route('/chart', 'GET', chart)
+    # app.route('/chart', 'GET', chart)
     app.route('/admin', 'GET', adminNoID)
     app.route('/admin/<sessionID>', 'GET', adminWithSessionid)
     app.route('/signon/<sessionID>', 'GET', signon)
